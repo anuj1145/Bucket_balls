@@ -1,3 +1,4 @@
+<?php use App\Models\Ball_avails; ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,12 +29,13 @@
                 </form>
 
                 <hr>
-                <?php 
+                <h2>Ball Form</h2>
+                <?php
                 $cookie_value=@$bucket_name;
                 $cookie_name="bucket";
                 setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); //for 1 day
                if(isset($_COOKIE[$cookie_name])) { 
-                echo "You selected bucket: " . $_COOKIE[$cookie_name];
+                //echo "You selected bucket: " . $_COOKIE[$cookie_name];
                  ?>
                 <h2>Ball Form</h2>
                 <form action="{{route('save_balls')}}" method="post">
@@ -60,29 +62,31 @@
             <div class="col-sm-4 p-3 bg-success text-white">
 
             <h2>Bucket Suggestion</h2>
+              
+          <?php $data_ball=Ball_avails::all()->toArray(); //echo "<pre>";print_r($data_ball); ?>
+     
+        <?php //print_r($balls); ?>
                 <form action="{{route('place_balls')}}" method="post">
                     @csrf
-                    Red: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="red_ball" id="red_ball" ><br>
-                    Blue: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="blue_ball" id="blue_ball" ><br>
-                    Pink: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="pink_ball" id="pink_ball" ><br>
-                    Orange: &nbsp;<input type="text" name="orange_ball" id="orange_ball" ><br>
-                    Green:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="green_ball" id="green_ball"><br><br>
-                    <input type="submit" class="btn btn-primary" value="Place balls in bucket">
+                    @foreach($data_ball as $balls)
+                    <label for="ball">{{$balls['ball_name']}}</label>: <input type="hidden" name="ball_name[]" value="{{$balls['ball_name']}}"> <input type="text" name="quantity[]" value="{{$balls['quantity']}}"> <br>
+                    @endforeach 
+                    <br/><input type="submit" class="btn btn-primary" value="Place balls in bucket">
                 </form>
             </div>
            
-            <table border="1">
-                <tr>
+            
         </div>
-        <td>
-           
+       
         @foreach($data as $datum)
-       <?php print nl2br(  "Bucket " .$datum['bucket']." ".$datum['quantity'] . "&nbsp;". $datum['ball_name']." Balls"); echo ",";?>
+        <?php echo "Bucket " . $datum['bucket'].":"?>
+       <?php 
+       echo $datum['balls'];
+       
+       echo "<br />";?>
         @endforeach
-    </td>
+   
     </div>
-    </tr>
-    </table>
 </body>
 
 </html>
